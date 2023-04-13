@@ -98,16 +98,16 @@ const userPut = async (
 
     const userFromToken = res.locals.user;
     const user = req.body;
-    const updatedUser = {
+    /* const updatedUser = {
       username: user.username ? user.username : userFromToken.username,
       email: user.email ? user.email : userFromToken.email,
       password: user.password
         ? bcrypt.hashSync(user.password, salt)
         : req.body.password,
-    };
+    }; */
 
     const result = await userModel
-      .findByIdAndUpdate(userFromToken.id, updatedUser, {
+      .findByIdAndUpdate(userFromToken.id, user, {
         new: true,
       })
       .select('-password -role');
@@ -153,17 +153,17 @@ const userPutAsAdmin = async (
     }
 
     const user = req.body;
-    const updatedUser = {
+    /* const updatedUser = {
       username: user.username ? user.username : user.username,
       email: user.email ? user.email : user.email,
       password: user.password
         ? bcrypt.hashSync(user.password, salt)
         : user.password,
       role: user.role ? user.role : user.role,
-    };
+    }; */
 
     const result = await userModel
-      .findByIdAndUpdate(user.id, updatedUser, {
+      .findByIdAndUpdate(user.id, user, {
         new: true,
       })
       .select('-password -role');
@@ -226,7 +226,8 @@ const userDeleteAsAdmin = async (
       return;
     }
 
-    const result = await userModel.findByIdAndDelete(req.body.id);
+    const result = await userModel.findByIdAndDelete(req.params.id);
+
     if (!result) {
       next(new CustomError('User not found', 404));
       return;
